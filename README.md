@@ -1,8 +1,45 @@
-# ref-film-to-storyboard-prompt
+# ref-film-to-storyboard-prompt：客户指着一支视频说「要这种」，怎么做出来
 
-- Turn "客户指着一支对标视频说要这个" into two deliverables — (1) a production-ready storyboard (逐镜表 + 参考截图 + 动效描述 + 每镜标 diffusion / code-gen / AE 一次性 / 素材 + 复现稳定性 + 可直接用的 diffusion 提示词) and (2) one complete, copy-as-a-whole hybrid video-generation prompt (TapVid 类混合模型：程序化图形 + 扩散实拍质感) with rendering-rule routing and hard constraints. The method: 拉片对标视频提机制（不是抄镜头） → 抓官网/brief 提炼品牌内容槽并逐条事实核对 → 定性 + 受众核对 → 坑位/填法 merge → 复现优先的"图形骨架 × 卖点插槽"设计 → 故事板 → 最终 prompt。Use this WHENEVER the user gives a reference/对标/benchmark video (URL 或文件) plus a brand, website, or brief and wants a 宣传片 / 品牌片 / 曝光素材 / 参考样片 / storyboard / 故事板 / 分镜 / video prompt out of it — including "帮我拉片然后写 prompt", "做一个像 X 那样的片子", "给动效师出故事板", "哪些用 diffusion 哪些用 codegen", "批量出素材测卖点" — even if they only ask for one of the two deliverables or don't say "拉片". Do not use for pure teardown with no production intent (that is video-lapian) or for article→explainer prompts with no reference film (that is explainer-video-prompt).
+客户发来一支参考视频和自己的官网或 brief，说想要这种感觉的宣传片。这个 skill 把这两样东西变成可以直接开工的故事板和一整段生成提示词。
 
-一个 Claude Code skill。来自合集 [claude-skills](https://github.com/Minerva67/claude-skills)。
+## 适合什么时候用
+
+- 要做一支像某个参考片那样的片子，手上有参考视频和品牌资料
+- 要给动效师出故事板
+- 想知道每个镜头该用视频模型生成还是用代码做
+- 要批量出素材，测试哪个卖点效果更好
+
+只想分析参考片、不打算制作的话，用 [video-lapian](https://github.com/Minerva67/video-lapian)。
+
+## 你会拿到什么
+
+1. **故事板**：一个 HTML 文件，可以直接发给动效师或制作方。每个镜头写明时间、对应的卖点、参考截图、旁白、画面描述、动效描述、制作方式（视频模型 / 代码 / AE 手做 / 现成素材）和成功率（稳 / 中 / 险）。用视频模型的镜头附完整英文提示词。
+2. **一整段英文生成提示词**：可以整段复制，适用于同时支持精确图形和实拍质感的混合生成工具。
+
+## 它怎么做
+
+- 从参考片里提炼 3–6 个可以迁移的手法，而不是逐镜照抄。客户要的是那支片的感觉，不是那支片本身。
+- 品牌文案、参数、网址、数字全部来自官网或 brief 原文。找不到来源的内容会删掉，或标为待确认。
+- 目标受众按资料里的证据判断，例如 FAQ 在对谁说话、主图里是谁在使用产品。
+- 默认采用「固定图形骨架 + 可替换的卖点位」，8–10 个镜头、15–30 秒。真人镜头只用生成模型比较稳定的景别（背影、侧面、俯拍、局部特写），每个镜头都可以单独替换。同一套骨架可以换卖点批量出片，某个镜头生成失败也不用整支重做。
+
+## 需要准备
+
+- 参考视频（链接或文件）
+- 官网链接或 brief
+- 已安装 [video-lapian](https://github.com/Minerva67/video-lapian)（拉片部分复用它的下载和抽帧脚本），以及 Python 3、yt-dlp、opencv
+
+## 怎么用
+
+- 「这是对标片和我们的官网，帮我出故事板和 prompt」
+- 「哪些镜头用 diffusion，哪些用 codegen」
+
+## 包含的文件
+
+- `SKILL.md`
+- `scripts/scrape_site.py`：抓取官网文案、色板和素材地址（包括打包在 JS 里的单页应用文案）
+- `scripts/build_storyboard.py`：生成故事板 HTML
+- `references/`：参考片与品牌的合并方法、逐镜制作方式的判断规则、故事板格式、提示词模板
 
 ## 安装
 
@@ -10,16 +47,6 @@
 git clone https://github.com/Minerva67/ref-film-to-storyboard-prompt.git ~/.claude/skills/ref-film-to-storyboard-prompt
 ```
 
-装好后在 Claude Code 里输入 `/ref-film-to-storyboard-prompt`，或者直接描述任务，符合条件时会自动触发。
+重启 Claude Code 后，直接描述你的任务就会触发。也可以输入 `/ref-film-to-storyboard-prompt` 手动调用。
 
-## 文件
-
-```
-SKILL.md
-references/merge-method.md
-references/prompt-template.md
-references/routing-rules.md
-references/storyboard-spec.md
-scripts/build_storyboard.py
-scripts/scrape_site.py
-```
+更多 skill 见 [claude-skills](https://github.com/Minerva67/claude-skills)。
