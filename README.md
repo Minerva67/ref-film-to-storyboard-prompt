@@ -2,6 +2,14 @@
 
 客户发来一支参考视频和自己的官网或 brief，说想要这种感觉的宣传片。这个 skill 把这两样东西变成可以直接开工的故事板和一整段生成提示词。
 
+## 示例
+
+品牌是虚构的桌面番茄钟「Tomo」，参考片是一支 20 秒的极简桌面产品片。产出 8 镜、20 秒的故事板：代码 4 镜、AE 1 镜、视频模型 2 镜、App 素材 1 镜，另有 3 个卖点变体。参考图用的是线框示意。
+
+完整文件：[examples/storyboard.html](examples/storyboard.html)（故事板，下载后用浏览器打开）、[examples/prompt.md](examples/prompt.md)（生成提示词）、[examples/brief.md](examples/brief.md)（作为来源的品牌资料）
+
+![示例截图](examples/preview.jpg)
+
 ## 适合什么时候用
 
 - 要做一支像某个参考片那样的片子，手上有参考视频和品牌资料
@@ -40,6 +48,7 @@
 - `scripts/scrape_site.py`：抓取官网文案、色板和素材地址（包括打包在 JS 里的单页应用文案）
 - `scripts/build_storyboard.py`：生成故事板 HTML
 - `references/`：参考片与品牌的合并方法、逐镜制作方式的判断规则、故事板格式、提示词模板
+- `examples/`：示例产出和截图
 
 ## 安装
 
